@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Basil George">
+    <title>Ai Là Triệu Phú</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+
+<body>
+    <main class="container">
+
+        <div class="admin-container hidden" id="admin-dashboard">
+            <header class="admin-header">
+                <h2>Bảng Điều Khiển Giáo Viên</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button id="tab-topics-btn" class="btn"
+                        style="background: gold; color: black; font-weight: bold;">Quản lý Câu hỏi</button>
+                    <button id="tab-students-btn" class="btn" style="border-color: gold; color: gold;">Quản lý Học
+                        sinh</button>
+                    <button id="teacher-profile-btn" class="btn" style="border-color: #3689e7; color: #3689e7;">Hồ Sơ
+                        Của Tôi</button>
+                    <button id="logout-btn" class="btn logout-btn">Đăng Xuất</button>
+
+                    <button id="tab-results-btn" class="btn" style="border-color: #11c466; color: #11c466;">Xem Kết
+                        Quả</button>
+                    <button id="tab-teachers-btn" class="tab-btn"
+                        style="display: none; background: transparent; color: gold; border: 1px solid gold; padding: 10px; margin-top: 10px; cursor: pointer; border-radius: 5px; font-weight: bold;">👨‍🏫
+                        Cấp tài khoản GV</button>
+                </div>
+            </header>
+
+            <div class="admin-content" id="admin-topic-content">
+                <div class="sidebar" id="topic-list">
+                    <h3>Chủ Đề</h3>
+                    <ul id="topic-ul"></ul>
+                    <button id="add-topic-btn" class="btn add-btn">+ Thêm Chủ Đề Mới</button>
+                </div>
+
+                <div class="main-panel" id="main-management-area">
+                    <h3 id="current-topic-display">Vui lòng chọn Chủ đề để quản lý Bài học...</h3>
+                    <ul class="lesson-list" id="lesson-ul"></ul>
+                    <button id="add-lesson-btn" class="btn add-btn"
+                        style="display:none; margin: 10px 0 20px 0; background-color: var(--primary-color);">+ Thêm Bài
+                        Học Mới</button>
+
+                    <div class="question-management-area hidden" id="question-management-area">
+                        <h4>Quản lý Câu hỏi: <span id="current-lesson-display"></span></h4>
+                        <button id="add-question-btn" class="btn add-btn">+ Thêm Câu Hỏi Mới</button>
+                        <div class="question-list" id="question-list-area"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-content hidden" id="admin-student-content">
+                <div class="sidebar">
+                    <h3>Danh sách Lớp</h3>
+                    <ul id="class-ul">
+                        <li style="color: white; list-style: none;">Đang tải...</li>
+                    </ul>
+                    <button id="add-class-btn" class="btn add-btn">+ Thêm Lớp Mới</button>
+                </div>
+
+                <div class="main-panel">
+                    <h3 id="current-class-display" style="color: gold; margin-bottom: 1.5rem;">Vui lòng chọn Lớp...</h3>
+
+                    <div id="student-management-area" class="hidden">
+                        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                            <button id="add-student-btn" class="btn add-btn"
+                                style="width: auto; margin: 0; background-color: #11c466; border-color: #059e4c;">
+                                + Thêm Học Sinh (Tạo tay)
+                            </button>
+                            <button id="import-excel-btn" class="btn"
+                                style="background: #e67e22; color: white; width: auto; margin: 0;">
+                                📥 Nhập từ Excel
+                            </button>
+                            <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;">
+                        </div>
+
+                        <div id="student-list-area"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-content hidden" id="admin-results-content">
+                <div class="main-panel" style="width: 100%;">
+                    <h3 style="color: gold;">BẢNG VÀNG KẾT QUẢ LUYỆN TẬP TẠI NHÀ</h3>
+                    <div id="results-list-area" style="margin-top: 20px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-content hidden" id="admin-teacher-content"
+                style="padding: 20px; color: white; display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+                <div class="main-panel" style="flex: 1; min-width: 300px; max-width: 400px; margin: 0;">
+                    <h2 style="color: gold; border-bottom: 2px solid #3689e7; padding-bottom: 10px;">Cấp Tài Khoản Mới
+                    </h2>
+                    <div
+                        style="background: rgba(0,0,0,0.5); padding: 25px; border-radius: 10px; margin-top: 20px; border: 1px solid #3689e7;">
+                        <p style="margin-bottom: 5px;">Tên đăng nhập:</p>
+                        <input type="text" id="new-teacher-username" placeholder="VD: gv_toan"
+                            style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: none; color: black;">
+                        <p style="margin-bottom: 5px;">Họ và tên Giáo viên:</p>
+                        <input type="text" id="new-teacher-fullname" placeholder="VD: Cô Lan Toán"
+                            style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: none; color: black;">
+                        <p style="margin-bottom: 5px;">Mật khẩu:</p>
+                        <input type="text" id="new-teacher-password" placeholder="Mật khẩu"
+                            style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: none; color: black;">
+                        <button id="create-teacher-btn"
+                            style="width: 100%; padding: 12px; background: #11c466; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">TẠO
+                            TÀI KHOẢN</button>
+                    </div>
+                </div>
+
+                <div class="main-panel" style="flex: 2; min-width: 400px; margin: 0;">
+                    <h2 style="color: gold; border-bottom: 2px solid #3689e7; padding-bottom: 10px;">Danh Sách Giáo Viên
+                    </h2>
+                    <div
+                        style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; margin-top: 20px; border: 1px solid #3689e7; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                            <thead>
+                                <tr style="background: #3689e7; color: white;">
+                                    <th style="padding: 10px; border: 1px solid #001a57;">ID</th>
+                                    <th style="padding: 10px; border: 1px solid #001a57;">Tên Đăng Nhập</th>
+                                    <th style="padding: 10px; border: 1px solid #001a57;">Họ & Tên</th>
+                                    <th style="padding: 10px; border: 1px solid #001a57; text-align: center;">Hành Động
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacher-list-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="auth-container">
+            <div class="auth-box">
+                <h2>Đăng Nhập Hệ Thống</h2>
+
+                <div class="mode-selection">
+                    <button id="mode-student-btn" class="auth-btn active-mode">Trên Lớp</button>
+                    <button id="mode-home-btn" class="auth-btn">Ở Nhà</button>
+                    <button id="mode-teacher-btn" class="auth-btn">Giáo Viên</button>
+                </div>
+
+                <div id="home-login-form" class="login-form hidden">
+                    <select id="home-class-select" class="auth-input"
+                        style="background: white; color: black; margin-bottom: 10px;">
+                        <option value="">-- Chọn Lớp --</option>
+                    </select>
+                    <input type="number" id="home-stt" placeholder="Số thứ tự (Tên đăng nhập)" class="auth-input"
+                        min="1">
+                    <input type="password" id="home-password" placeholder="Mật khẩu (ddmmyyyy)" class="auth-input">
+                    <button id="login-home-btn" class="btn">Đăng Nhập Luyện Tập</button>
+                </div>
+
+                <div id="teacher-login-form" class="login-form hidden">
+                    <input type="text" id="teacher-username" placeholder="Tên đăng nhập" class="auth-input">
+                    <input type="password" id="teacher-password" placeholder="Mật khẩu" class="auth-input">
+                    <button id="login-teacher-btn" class="btn">Đăng Nhập</button>
+                </div>
+
+                <div id="student-start-game" class="login-form">
+                    <div class="selection-area" style="margin-bottom: 20px; width: 100%; text-align: left;">
+                        <label style="color: gold; font-size: 1.1rem; display: block; margin-bottom: 5px;">1. Chọn Chủ
+                            đề:</label>
+                        <select id="student-topic-select" class="auth-input"
+                            style="background: white; color: black; margin-bottom: 15px;">
+                            <option value="">-- Chọn Chủ đề --</option>
+                        </select>
+
+                        <label style="color: gold; font-size: 1.1rem; display: block; margin-bottom: 5px;">2. Chọn Bài
+                            học:</label>
+                        <select id="student-lesson-select" class="auth-input" style="background: white; color: black;">
+                            <option value="">-- Vui lòng chọn chủ đề trước --</option>
+                        </select>
+                    </div>
+                    <button id="start-as-student-btn" class="btn">Vào phòng chờ</button>
+                </div>
+            </div>
+        </div>
+
+        <section class="start-box custom hidden" id="start-box">
+            <button id="back-to-auth-btn" class="btn back-btn">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </button>
+            <div class="game-logo">
+                <img src="img/logo(1).png" alt="Logo Game" class="glowing-spin-logo" width="150" height="150">
+
+                <div class="user-info">
+                    <style>
+                        #wrapper {
+                            position: absolute;
+                            top: 500px;
+                            right: 100px;
+                            z-index: 1000;
+                        }
+
+                        button#btn-open {
+                            background-color: rgba(14, 122, 224, 0);
+                            color: #fff;
+                            border: 0.5px solid #2569b6;
+                            padding: 1rem;
+                            cursor: pointer;
+                            border-radius: 1rem;
+                            transition: all .3s linear;
+                            animation: blinker 1s linear;
+                            font-size: 1rem;
+                        }
+
+                        button#btn-open:hover {
+                            background-color: gold;
+                            color: black;
+                        }
+
+                        #modal-container {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            background: rgba(0, 0, 0, 0.5);
+                            height: 100vh;
+                            opacity: 0;
+                            pointer-events: none;
+                            transition: all 0.3s ease-in-out;
+                        }
+
+                        #modal-container.show {
+                            opacity: 1;
+                            pointer-events: all;
+                        }
+
+                        .modal {
+                            position: relative;
+                            top: 0;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            max-width: 700px;
+                            background: #5e5a5a;
+                            transition: all 0.4s ease-in-out;
+                        }
+
+                        #modal-container.show .modal {
+                            top: 100px;
+                        }
+
+                        .modal-header {
+                            padding: 20px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            border-bottom: 1px solid #e9ecef;
+                        }
+
+                        .modal-header h3 {
+                            margin: 0;
+                        }
+
+                        .modal-header button#btn-close {
+                            border: none;
+                            background: none;
+                            outline: none;
+                            font-size: 20px;
+                            cursor: pointer;
+                        }
+
+                        button#btn-close:hover {
+                            background-color: #d71515;
+                            color: rgb(249, 249, 249);
+                        }
+
+                        .modal-body {
+                            padding: 0px 20px 20px;
+                            overflow-y: scroll;
+                            width: 660px;
+                            height: 300px;
+                            line-height: 1.5;
+                        }
+                    </style>
+                    <div id="wrapper">
+                        <button id="btn-open">Giới thiệu và hướng dẫn</button>
+                        <div id="modal-container">
+                            <div class="modal" id="modal-game">
+                                <div class="modal-header">
+                                    <h3>Giới thiệu và hướng dẫn</h3>
+                                    <button id="btn-close"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h3 style="color: gold; text-transform: uppercase;">Giới thiệu về game:</h3>
+                                    <p style="text-align: justify; margin-bottom: 15px;"><b>Ai Là Triệu Phú</b> phiên
+                                        bản trường học là một trò chơi trắc nghiệm kiến thức đầy kịch tính, giúp các bạn
+                                        học sinh vừa giải trí vừa ôn tập bài cũ một cách hiệu quả. Hệ thống có 2 chế độ
+                                        chơi linh hoạt: <b>Thi đấu Trên Lớp</b> (tích lũy tiền thưởng ảo) và <b>Luyện
+                                            tập Ở Nhà</b> (chấm điểm theo thang điểm 10).</p>
+
+                                    <h3
+                                        style="color: gold; text-transform: uppercase; border-bottom: 1px solid #3689e7; padding-bottom: 5px; margin-bottom: 15px;">
+                                        Hướng dẫn chơi game:</h3>
+
+                                    <p style="color: #11c466; font-size: 1.1rem; margin-bottom: 5px;"><b>1. Bắt đầu trò
+                                            chơi:</b></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                                        <li>Đăng nhập tài khoản theo đúng chế độ (Trên Lớp hoặc Ở Nhà).</li>
+                                        <li>Chọn <b>Chủ đề</b> và <b>Bài học</b> tương ứng mà giáo viên đã giao.</li>
+                                        <li>Nhấp vào nút <b>"Vào phòng chờ"</b>, sau đó nhấn <b>"▶ Sẵn sàng"</b> để bắt
+                                            đầu đếm ngược.</li>
+                                    </ul>
+
+                                    <p style="color: #11c466; font-size: 1.1rem; margin-bottom: 5px;"><b>2. Luật chơi cơ
+                                            bản:</b></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                                        <li>Sẽ có tổng cộng <b>10 câu hỏi</b> trắc nghiệm (A, B, C, D) với độ khó tăng
+                                            dần.</li>
+                                        <li>Mỗi câu hỏi bạn có <b>60 giây</b> để suy nghĩ. Nếu đồng hồ đếm ngược về 0 mà
+                                            bạn chưa chọn đáp án, bạn sẽ mất quyền đi tiếp.</li>
+                                        <li>Khi trả lời đúng, bạn sẽ chuyển sang câu tiếp theo. Trả lời sai, trò chơi
+                                            dừng lại ngay lập tức.</li>
+                                        <li><b>Các mốc an toàn (Chế độ Trên lớp):</b> Câu 3 (2.000.000 VND) và Câu 7
+                                            (22.000.000 VND). Khi vượt qua mốc này, dù bạn trả lời sai ở các câu sau,
+                                            bạn vẫn bảo toàn được số tiền thưởng ở mốc an toàn gần nhất.</li>
+                                    </ul>
+
+                                    <p style="color: #11c466; font-size: 1.1rem; margin-bottom: 5px;"><b>3. Các quyền
+                                            trợ giúp:</b></p>
+                                    <p style="margin-bottom: 5px;">Trong suốt quá trình chơi, bạn được cung cấp 4 quyền
+                                        trợ giúp (mỗi quyền chỉ dùng 1 lần):</p>
+                                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                                        <li><b style="color: gold;">50/50:</b> Máy tính sẽ tự động loại bỏ đi 2 phương
+                                            án sai, để lại 1 phương án đúng và 1 phương án sai.</li>
+                                        <li><b style="color: gold;">Hỏi ý kiến khán giả:</b> Xem biểu đồ phần trăm lựa
+                                            chọn đáp án của khán giả giả lập trong trường quay.</li>
+                                        <li><b style="color: gold;">Hỏi trợ lý ảo:</b> Kết nối với "Trợ lý ảo trí tuệ
+                                            nhân tạo" để nhận gợi ý đáp án.</li>
+                                        <li><b style="color: gold;">Đổi câu hỏi:</b> Bỏ qua câu hỏi hiện tại đang làm
+                                            khó bạn và thay bằng một câu hỏi dự phòng khác.</li>
+                                    </ul>
+
+                                    <p style="color: #11c466; font-size: 1.1rem; margin-bottom: 5px;"><b>4. Ghi nhận
+                                            thành tích:</b></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                                        <li>Sau khi kết thúc lượt chơi, kết quả của bạn (Thời gian, Điểm số/Tiền thưởng)
+                                            sẽ được gửi thẳng về hệ thống.</li>
+                                        <li>Hãy thật cẩn trọng, suy nghĩ kỹ càng để đạt thành tích tốt nhất và được vinh
+                                            danh trên <b>Bảng Vàng</b> của lớp nhé!</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        const open = document.getElementById('btn-open');
+                        const close = document.getElementById('btn-close');
+                        const modal_container = document.getElementById('modal-container');
+                        const modal_demo = document.getElementById('modal-game');
+
+                        open.addEventListener('click', () => { modal_container.classList.add('show'); });
+                        close.addEventListener('click', () => { modal_container.classList.remove('show'); });
+                        modal_container.addEventListener('click', (e) => { if (!modal_demo.contains(e.target)) { close.click(); } });
+                    </script>
+                </div>
+            </div>
+
+            <div class="user-info">
+                <div class="start-game-btn btn">▶ Sẵn sàng</div>
+            </div>
+        </section>
+
+        <section class="game-box custom">
+            <div class="game">
+                <div class="timer">60</div>
+                <div class="current-question-amount"></div>
+                <div class="life-line-display-box">
+                    <div class="call">
+                        <img src="img/AI.png" alt="call">
+                        <div class="call-answer"></div>
+                    </div>
+                    <div class="au-cover">
+                        <h4 class="alpha">ABCD</h4>
+                        <div class="au-container">
+                            <div class="au-box" id="0"><span></span>
+                                <div class="bx"></div>
+                            </div>
+                            <div class="au-box" id="1"><span></span>
+                                <div class="bx"></div>
+                            </div>
+                            <div class="au-box" id="2"><span></span>
+                                <div class="bx"></div>
+                            </div>
+                            <div class="au-box" id="3"><span></span>
+                                <div class="bx"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="amount-won"></div>
+                </div>
+
+                <div class="question-box">
+                    <div class="question">
+                        <div class="question-number"></div>
+                        <div class="question-text"></div>
+                    </div>
+                    <div class="option-box">
+                        <div class="option" id="0" onclick="check(this)"><span class="span-o">A: </span><span
+                                class="opt"></span></div>
+                        <div class="option" id="1" onclick="check(this)"><span class="span-o">B: </span><span
+                                class="opt"></span></div>
+                        <div class="option" id="2" onclick="check(this)"><span class="span-o">C: </span><span
+                                class="opt"></span></div>
+                        <div class="option" id="3" onclick="check(this)"><span class="span-o">D: </span><span
+                                class="opt"></span></div>
+                    </div>
+                    <div class="next-question">
+                        <button type="button" class="next-question-btn btn">Câu hỏi tiếp theo</button>
+                        <button type="button" class="playAgain-btn btn"> Chơi lại ⟲ </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side">
+                <div class="life-lines">
+                    <div class="fify50"><span class="cancel"></span></div>
+                    <div class="callAFriend"><span class="cancel"></span></div>
+                    <div class="askTheAudience"><span class="cancel"></span></div>
+                    <div class="swapQuestion" title="Đổi câu hỏi"><span class="cancel"></span></div>
+                </div>
+                <div class="price-box">
+                    <ul class="prices">
+                        <li class="milestone"><span>10</span> <span>250.000.000 VND</span></li>
+                        <li><span>9</span> <span>150.000.000 VND</span></li>
+                        <li><span>8</span> <span>100.000.000 VND</span></li>
+                        <li class="milestone"><span>7</span> <span>22.000.000 VND</span></li>
+                        <li><span>6</span> <span>14.000.000 VND</span></li>
+                        <li><span>5</span> <span>10.000.000 VND</span></li>
+                        <li><span>4</span> <span>6.000.000 VND</span></li>
+                        <li class="milestone"><span>3</span> <span>2.000.000 VND</span></li>
+                        <li><span>2</span> <span>1.000.000 VND</span></li>
+                        <li><span>1</span> <span>500.000 VND</span></li>
+                    </ul>
+
+                </div>
+            </div>
+        </section>
+        <div id="final-result-overlay" class="final-result-overlay">
+            <div class="final-card" id="final-card-content"></div>
+        </div>
+    </main>
+
+    <div id="add-question-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header-custom">
+                <h3>Thêm Câu Hỏi Mới</h3>
+                <span id="close-add-q-modal" class="close-btn">&times;</span>
+            </div>
+            <form id="add-question-form">
+                <div class="form-group">
+                    <label>Nội dung câu hỏi:</label>
+                    <textarea id="q-text" rows="2" placeholder="Nhập câu hỏi..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Các phương án:</label>
+                    <div class="options-grid-input">
+                        <input type="text" id="q-opt1" placeholder="Phương án A" required>
+                        <input type="text" id="q-opt2" placeholder="Phương án B" required>
+                        <input type="text" id="q-opt3" placeholder="Phương án C" required>
+                        <input type="text" id="q-opt4" placeholder="Phương án D" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Đáp án đúng:</label>
+                        <select id="q-correct" required>
+                            <option value="">--Chọn--</option>
+                            <option value="0">A</option>
+                            <option value="1">B</option>
+                            <option value="2">C</option>
+                            <option value="3">D</option>
+                        </select>
+                    </div>
+                    <div class="form-group half">
+                        <label>Độ khó:</label>
+                        <select id="q-diff">
+                            <option value="easy">Dễ</option>
+                            <option value="medium">Trung bình</option>
+                            <option value="hard">Khó</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn save-btn"
+                        style="background-color: var(--correct-color); width: 100%;">Lưu Câu Hỏi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="student-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center;">
+        <div
+            style="background: #0e0543; border: 2px solid #3689e7; padding: 20px; border-radius: 10px; width: 400px; max-width: 90%; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3689e7; padding-bottom: 10px;">
+                <h3 style="color: gold; margin: 0; font-size: 1.5rem;">Sửa Thông Tin</h3>
+                <span id="close-student-modal"
+                    style="color: white; font-size: 28px; cursor: pointer; font-weight: bold;">&times;</span>
+            </div>
+            <form id="student-form" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                <input type="hidden" id="edit-student-id">
+
+                <label style="color: white; font-weight: bold;">Số Thứ Tự (STT):</label>
+                <input type="number" id="edit-student-stt" required
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #3689e7; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+
+                <label style="color: white; font-weight: bold;">Họ và Tên:</label>
+                <input type="text" id="edit-student-name" required
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #3689e7; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+
+                <label style="color: white; font-weight: bold;">Mật khẩu:</label>
+                <input type="text" id="edit-student-pass" required
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #3689e7; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+
+                <button type="submit"
+                    style="background: #11c466; color: white; padding: 12px; margin-top: 15px; font-weight: bold; font-size: 1.1rem; border-radius: 8px; border: none; cursor: pointer;">💾
+                    LƯU THAY ĐỔI</button>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <div id="student-change-pass-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center;">
+        <div
+            style="background: #0e0543; border: 2px solid #3689e7; padding: 20px; border-radius: 10px; width: 400px; max-width: 90%; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3689e7; padding-bottom: 10px;">
+                <h3 style="color: gold; margin: 0; font-size: 1.5rem;">🔑 Đổi Mật Khẩu</h3>
+                <span id="close-change-pass-modal"
+                    style="color: white; font-size: 28px; cursor: pointer; font-weight: bold;">&times;</span>
+            </div>
+            <form id="change-pass-form" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                <label style="color: white; font-weight: bold;">Mật khẩu hiện tại:</label>
+                <input type="password" id="old-pass-input" placeholder="Nhập mật khẩu đang dùng" required
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #3689e7; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+
+                <label style="color: white; font-weight: bold;">Mật khẩu mới:</label>
+                <input type="password" id="new-pass-input" placeholder="Nhập mật khẩu mới" required
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #3689e7; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+
+                <button type="submit"
+                    style="background: #11c466; color: white; padding: 12px; margin-top: 15px; font-weight: bold; font-size: 1.1rem; border-radius: 8px; border: none; cursor: pointer;">💾
+                    LƯU MẬT KHẨU MỚI</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-lifeline-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
+        <div
+            style="background: linear-gradient(180deg, #0e0543 0%, #001a57 100%); border: 2px solid gold; padding: 30px; border-radius: 15px; width: 450px; text-align: center; box-shadow: 0 0 20px gold;">
+            <h2 style="color: gold; margin-bottom: 20px; font-size: 1.8rem;">💡 TRỢ GIÚP</h2>
+            <p id="confirm-lifeline-text"
+                style="color: white; font-size: 1.2rem; line-height: 1.6; margin-bottom: 30px;">Bạn có chắc chắn muốn sử
+                dụng quyền trợ giúp này không?</p>
+            <div style="display: flex; justify-content: space-around;">
+                <button id="btn-confirm-yes"
+                    style="background: #11c466; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 1.1rem; min-width: 120px;">ĐỒNG
+                    Ý</button>
+                <button id="btn-confirm-no"
+                    style="background: #d71515; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 1.1rem; min-width: 120px;">HUỶ
+                    BỎ</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <div id="system-confirm-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100000; justify-content: center; align-items: center;">
+        <div
+            style="background: #0e0543; border: 2px solid #d71515; padding: 25px; border-radius: 10px; width: 400px; max-width: 90%; text-align: center; box-shadow: 0 0 20px rgba(215, 21, 21, 0.5);">
+            <h3 style="color: #d71515; margin-top: 0; font-size: 1.5rem;">⚠️ YÊU CẦU XÁC NHẬN</h3>
+            <p id="system-confirm-text" style="color: white; font-size: 1.1rem; margin: 20px 0; line-height: 1.5;"></p>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                <button id="btn-sys-cancel"
+                    style="background: #3689e7; color: white; border: none; padding: 10px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">HUỶ
+                    BỎ</button>
+                <button id="btn-sys-confirm"
+                    style="background: #d71515; color: white; border: none; padding: 10px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">ĐỒNG
+                    Ý XÓA</button>
+            </div>
+        </div>
+    </div>
+    <div id="edit-teacher-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center;">
+        <div
+            style="background: #0e0543; border: 2px solid #3689e7; padding: 20px; border-radius: 10px; width: 400px; max-width: 90%; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3689e7; padding-bottom: 10px;">
+                <h3 style="color: gold; margin: 0; font-size: 1.5rem;">Sửa Giáo Viên</h3>
+                <span id="close-edit-teacher-modal"
+                    onclick="document.getElementById('edit-teacher-modal').style.display='none'"
+                    style="color: white; font-size: 28px; cursor: pointer; font-weight: bold;">&times;</span>
+            </div>
+            <form id="edit-teacher-form" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                <input type="hidden" id="admin-edit-teacher-id">
+                <label style="color: white; font-weight: bold;">Tên đăng nhập:</label>
+                <input type="text" id="admin-edit-teacher-username" required
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #3689e7; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+                <label style="color: white; font-weight: bold;">Họ và tên:</label>
+                <input type="text" id="admin-edit-teacher-fullname" required
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #3689e7; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+                <label style="color: white; font-weight: bold;">Mật khẩu mới (Bỏ trống nếu không đổi):</label>
+                <input type="text" id="admin-edit-teacher-password" placeholder="Nhập mật khẩu mới nếu muốn đổi"
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #3689e7; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+                <button type="button" onclick="submitEditTeacher()"
+                    style="background: #11c466; color: white; padding: 12px; margin-top: 15px; font-weight: bold; font-size: 1.1rem; border-radius: 8px; border: none; cursor: pointer;">💾
+                    LƯU THAY ĐỔI</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="teacher-profile-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center;">
+        <div
+            style="background: #0e0543; border: 2px solid #3689e7; padding: 20px; border-radius: 10px; width: 400px; max-width: 90%; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3689e7; padding-bottom: 10px;">
+                <h3 style="color: gold; margin: 0; font-size: 1.5rem;">Hồ Sơ Của Tôi</h3>
+                <span id="close-teacher-profile-modal"
+                    onclick="document.getElementById('teacher-profile-modal').style.display='none'"
+                    style="color: white; font-size: 28px; cursor: pointer; font-weight: bold;">&times;</span>
+            </div>
+
+            <h4 style="color: #11c466; margin-top: 15px; border-bottom: 1px dashed gray; padding-bottom: 5px;">1. Cập
+                nhật thông tin</h4>
+            <form id="teacher-update-profile-form"
+                style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <label style="color: white;">Tên đăng nhập:</label>
+                <input type="text" id="profile-username" required
+                    style="padding: 8px; border-radius: 5px; border: 1px solid #3689e7; background: rgba(255,255,255,0.1); color: white;">
+                <label style="color: white;">Họ và tên:</label>
+                <input type="text" id="profile-fullname" required
+                    style="padding: 8px; border-radius: 5px; border: 1px solid #3689e7; background: rgba(255,255,255,0.1); color: white;">
+                <button type="button" onclick="submitUpdateProfile()"
+                    style="background: #3689e7; color: white; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold;">CẬP
+                    NHẬT THÔNG TIN</button>
+            </form>
+
+            <h4 style="color: #e67e22; margin-top: 20px; border-bottom: 1px dashed gray; padding-bottom: 5px;">2. Đổi
+                mật khẩu</h4>
+            <form id="teacher-change-password-form"
+                style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <label style="color: white;">Mật khẩu hiện tại:</label>
+                <input type="password" id="profile-old-pass" required
+                    style="padding: 8px; border-radius: 5px; border: 1px solid #e67e22; background: rgba(255,255,255,0.1); color: white;">
+                <label style="color: white;">Mật khẩu mới:</label>
+                <input type="password" id="profile-new-pass" required
+                    style="padding: 8px; border-radius: 5px; border: 1px solid #e67e22; background: rgba(255,255,255,0.1); color: white;">
+                <button type="button" onclick="submitChangePassword()"
+                    style="background: #e67e22; color: white; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold;">ĐỔI
+                    MẬT KHẨU</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
